@@ -16,6 +16,10 @@ This guide takes you from an empty Redis Cloud account to a working demo in
 about 45 minutes. You will create two services in the Redis Cloud console, run
 one setup command, and install the plugin in ChatGPT.
 
+**Faster with a coding agent:** open this folder in Codex (or any agent that
+reads `.agents/skills/`) and ask it to "use the set-up-demo skill". You still
+do the console steps, but the agent publishes the Skill and runs setup for you.
+
 Developers who want to know how it works should read
 [docs/how-it-works.md](docs/how-it-works.md) and [AGENTS.md](AGENTS.md).
 
@@ -521,6 +525,22 @@ reaches the shared team memory unless ChatGPT shows you the exact update and
 you confirm it. Your participant name labels your contributions but is not a
 login; access is controlled by your keys. Details are in
 [SECURITY.md](SECURITY.md).
+
+## Faster setup: CLI, SDK and agents
+
+Most of Part 2 is console clicks, and many of them have an `iris` CLI command
+or a Python SDK call. Both are already installed in this project's `.venv`.
+
+- [docs/console-to-cli.md](docs/console-to-cli.md): every console click, its
+  CLI command and SDK call, and whether it works on Redis Cloud today.
+- [docs/demo_script_cloud.md](docs/demo_script_cloud.md): this guide as
+  commands, one per block.
+- `.agents/skills/set-up-demo`: hands those commands to a coding agent. Open
+  this folder in Codex and ask it to "use the set-up-demo skill".
+
+The commands handle packaging, uploading and publishing the Skill, the setup
+prompts, loading the documents, and every check. A few steps are still console
+only: the store, the memory type, the extractor, the Playbook and the keys.
 
 ## More documentation
 

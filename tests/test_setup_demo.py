@@ -121,5 +121,35 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(calls[-1], ["plugin", "add", PLUGIN])
 
 
+class AssumeYesTests(unittest.TestCase):
+    def setUp(self):
+        setup_demo.ASSUME_YES = True
+        self.addCleanup(setattr, setup_demo, "ASSUME_YES", False)
+
+    def test_takes_saved_values_without_prompting(self):
+        existing = {
+            "IRIS_AGENT_MEMORY_URL": "https://memory.example.redis.io/",
+            "IRIS_AGENT_MEMORY_STORE_ID": "st_" + "a" * 32,
+            "IRIS_AGENT_MEMORY_API_KEY": "k" * 20,
+            "_EXTRACTOR_ID": "ex_" + "b" * 32,
+            "IRIS_AGENT_PLAYBOOKS_URL": "https://playbook.example.redis.io/iris/data/v1",
+            "IRIS_AGENT_PLAYBOOKS_PLAYBOOK_ID": "pb_" + "c" * 32,
+            "IRIS_AGENT_PLAYBOOKS_API_KEY": "r" * 20,
+            "RAM_PARTICIPANT": "Laura",
+        }
+        values, extractor_id = setup_demo.collect(existing)
+        self.assertEqual(values["IRIS_AGENT_MEMORY_URL"], "https://memory.example.redis.io")
+        self.assertEqual(values["IRIS_AGENT_PLAYBOOKS_URL"], "https://playbook.example.redis.io")
+        self.assertEqual(values["RAM_PERSONAL_NAMESPACE"], "private-laura")
+        self.assertEqual(extractor_id, "ex_" + "b" * 32)
+        self.assertTrue(setup_demo.confirm("Trust this folder now?"))
+
+    def test_a_missing_or_invalid_value_stops_instead_of_prompting(self):
+        with self.assertRaises(SystemExit):
+            setup_demo.ask("Store ID", default="")
+        with self.assertRaises(SystemExit):
+            setup_demo.ask("Store ID", default="st_short", check=setup_demo._pattern(r"st_[0-9a-f]{32}", "bad"))
+
+
 if __name__ == "__main__":
     unittest.main()

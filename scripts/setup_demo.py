@@ -41,6 +41,9 @@ VENV = ROOT / ".venv"
 REQUIREMENTS = SERVER / "requirements.txt"
 PLUGIN_ID = "redis-shared-memory-editor-redis-field-engineering"
 DEMO_PARTICIPANTS = ("andrew", "craig", "david", "laura")
+# --yes: take every value from the saved settings file and never prompt, so a
+# coding agent (or a script) can run setup without a terminal.
+ASSUME_YES = False
 
 
 def say(message: str = "") -> None:
@@ -98,6 +101,13 @@ def _clean(value: str) -> str:
 
 
 def ask(label: str, *, default: str = "", check=None, secret: bool = False, hint: str = "") -> str:
+    if ASSUME_YES:
+        problem, value = check(default) if check and default else (None, default)
+        if not value or problem:
+            say(f"{label.strip()}: {problem or 'missing'} (in the settings file).")
+            say("Fix that line in the settings file, or run setup without --yes.")
+            raise SystemExit(1)
+        return value
     while True:
         if hint:
             say(f"  {hint}")
@@ -374,6 +384,9 @@ def chatgpt_running() -> bool:
 
 
 def confirm(question: str, default: bool = True) -> bool:
+    if ASSUME_YES:
+        say(f"  {question} {'yes' if default else 'no'} (--yes)")
+        return default
     answer = input(f"  {question} [{'Y/n' if default else 'y/N'}]: ").strip().lower()
     return default if not answer else answer.startswith("y")
 
@@ -410,7 +423,7 @@ def remove_plugin(codex: str, run=subprocess.run) -> bool:
 
 
 def wait_for_chatgpt_to_quit() -> None:
-    for _ in range(3):
+    for _ in range(0 if ASSUME_YES else 3):
         if not chatgpt_running():
             return
         say("ChatGPT is open. Setup installs the plugin into it, so quit ChatGPT now:")
@@ -427,7 +440,10 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--config", help="Settings file to write (default: ~/.config/redis-shared-memory/editor.env)")
     parser.add_argument("--skip-load", action="store_true", help="Do not load the demo documents")
     parser.add_argument("--remove", action="store_true", help="Remove the plugin from ChatGPT and stop")
+    parser.add_argument("--yes", action="store_true", help="Use the saved settings file without prompting (for agents)")
     args = parser.parse_args(argv)
+    global ASSUME_YES
+    ASSUME_YES = args.yes
     if args.remove:
         return remove(args.config)
     ensure_environment(argv)
