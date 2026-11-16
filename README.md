@@ -16,6 +16,10 @@ This guide takes you from an empty Redis Cloud account to a working demo in
 about 45 minutes. You will create two services in the Redis Cloud console, run
 one setup command, and install the plugin in ChatGPT.
 
+**Faster with a coding agent:** open this folder in Codex (or any agent that
+reads `.agents/skills/`) and ask it to "use the set-up-demo skill". You still
+do the console steps, but the agent publishes the Skill and runs setup for you.
+
 Developers who want to know how it works should read
 [docs/how-it-works.md](docs/how-it-works.md) and [AGENTS.md](AGENTS.md).
 
