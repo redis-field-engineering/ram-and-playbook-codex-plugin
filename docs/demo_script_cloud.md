@@ -9,11 +9,11 @@ documents, installing the plugin, and inspecting the result.
 **Status (2026-11-16):** every command was checked on redis-iris 1.1.0. The
 offline steps ran: install, pipeline check, Skill validate, the Cloud refusals
 and `service env`. The steps that need keys (3 to 6) have not yet run against
-a live Redis Cloud service, and the script has not been timed. The estimate is
-about 37 minutes, against the README's 45. Typing commands is still hands-on,
-so the time saved comes mostly from fewer failed attempts. Handing the script
-to an agent (the `set-up-demo` skill) is what saves time; see README "Faster
-setup".
+a live Redis Cloud service, and the script has not been timed. Every block
+after step 1 can run unattended, chained in a script or handed to an agent
+(the `set-up-demo` skill). Your time is then the console, pasting the keys and
+ChatGPT: an estimated ~25 minutes against the README's ~40, with ~33 minutes
+from start to finish. See README "Faster setup".
 
 | Step | README (console) | This script |
 |---|---|---|
