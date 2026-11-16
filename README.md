@@ -538,28 +538,9 @@ or a Python SDK call. Both are already installed in this project's `.venv`.
 - `.agents/skills/set-up-demo`: hands those commands to a coding agent. Open
   this folder in Codex and ask it to "use the set-up-demo skill".
 
-How much faster each path is. This assumes every command in
-`demo_script_cloud.md` runs unattended, either chained in one script or
-handed to an agent, so you never type them. These are **estimates**: the
-README's steps re-added for each path, not measured:
-
-| Path | Your time | Start to finish | Your time saved |
-| --- | --- | --- | --- |
-| This README, by hand | ~40 min | ~40 min | none |
-| Commands run by a script or an agent, **today** | ~25 min: the console, pasting keys, ChatGPT | ~33 min | ~40% (~1.6× less) |
-| Script or agent with CLI and SDK, once Cloud sign-in ships | ~6 min: sign in, approve, allow hooks | ~19 min | ~85% (~7× less) |
-
-Today the commands take the Skill packaging, upload and publish, the setup
-prompts, the document load and every check off your hands. That's about 8
-minutes that run while you wait or do something else. A script stops at the
-first error. An agent also reads the error, fixes what a command can fix, and
-tells you which console step to redo. The commands still leave you the
-console: the store, the nine-field memory type (the slowest single step,
-about 8 minutes), the extractor, the Playbook and two keys. Those are control-plane steps. The SDK can already do every one of them,
-including the field descriptions, but on Redis Cloud it needs a control-plane
-sign-in for the CLI and SDK, which isn't released yet. Once it ships, an agent
-can run Part 2 end to end, and the ingest wait (about 5 minutes) becomes most
-of the remaining time.
+The commands handle packaging, uploading and publishing the Skill, the setup
+prompts, loading the documents, and every check. A few steps are still console
+only: the store, the memory type, the extractor, the Playbook and the keys.
 
 ## More documentation
 
