@@ -1,9 +1,14 @@
 # Console clicks you can replace with the `iris` CLI
 
 Most README setup steps are console clicks. Many of them already have an
-`iris` command. The CLI ships with the pinned `redis-iris==1.0.1` in this
+`iris` command. The CLI ships with the pinned `redis-iris` (1.1.0) in this
 repository's `.venv`, so `.venv/bin/iris` is there after the first setup, with
-nothing extra to install.
+nothing extra to install. Set `IRIS_CONFIG=iris.toml` (this repository's
+`kind = "cloud"` file). Control-plane commands then print the console steps
+instead of failing.
+
+For a step-by-step run of every **Today** row, see
+[demo_script_cloud.md](demo_script_cloud.md).
 
 This is a running list. The status shows what works against Redis Cloud
 **today**:
@@ -30,7 +35,8 @@ every **Today** row.
 | Steps 7.5–7.6: **Registry → Skills → Upload Skill**, choose ZIP, **Optional settings**: alias, 5 intents, filter JSON | `iris agent-playbooks skills push dist/skills/prepare-management-review-agenda` (needs a content key) | **Today** |
 | Step 7.7: **Publish version → Publish** | Add `--publish all` to the `push` above, or run `iris agent-playbooks skills publish prepare-management-review-agenda --version latest` | **Today** |
 | Step 8: **Connect → Create an API key → Customize in the full page**, untick **full**, **Create key** | `iris agent-playbooks service key <pb-id> --actions read --write editor.env` mints a read-only key without the full-page workaround. `--role content` mints the publish key. | When Cloud sign-in ships |
-| Step 9: copy 7 values from 3 console pages into the setup prompts | `iris agent-memory service env <store-id> --write editor.env` and `iris agent-playbooks service env <pb-id> --write editor.env`; then `setup_demo.py --yes` reads the file | `env`: when Cloud sign-in ships. `--yes`: **Today** |
+| Steps 6 and 8: two separate key dialogs | Console, but fewer clicks: **Iris → Access & Identity → New API key** takes one grant per resource. One key (store read/write, Playbook read) covers the plugin, with no full-page workaround. The CLI's Cloud refusal prints these steps. | **Today** (console) |
+| Step 9: copy 7 values from 3 console pages into the setup prompts | `iris agent-memory service env <store-id> --write editor.env` and `iris agent-playbooks service env <pb-id> --write editor.env` write the exact variable names, leaving the key empty. Then `setup_demo.py --yes` reads the file. | **Today** on a `kind = "cloud"` profile once the URL is set (tried offline on 1.1.0). `--yes`: **Today** |
 
 Step 4 as a file, once Cloud sign-in ships. One command replaces the type
 dialog and its nine **Add field** rows:
@@ -98,6 +104,7 @@ Without these, Cloud sign-in alone still leaves console steps:
    at `service create`. Adding one to a store that already exists stays in
    the console.
 
-Status as of redis-iris 1.0.1 (pinned here) and 1.1.0. I checked command
-availability and ran `skills validate` offline. I haven't run the **Today**
+Status as of redis-iris 1.1.0 (pinned here, the latest on 2026-11-16). I
+checked that each command exists and ran the offline ones: `skills validate`,
+the Cloud refusals and `service env`. I haven't run the key-based **Today**
 commands against a live Redis Cloud service.

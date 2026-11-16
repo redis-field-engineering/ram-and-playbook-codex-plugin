@@ -1,0 +1,4 @@
+# iris CLI settings for this demo (select with IRIS_CONFIG=iris.toml).
+# Redis Cloud owns stores, Playbooks and keys, so control-plane commands print
+# the console steps instead of failing halfway. Everything that uses a key runs.
+kind = "cloud"

@@ -46,14 +46,16 @@ README sections:
 3. **README Step 5**: create the extractor. Run
    `pbcopy < context-models/management-agenda/v1/extraction-prompt-compact.txt`
    for them first, so the prompt is on their clipboard. Note the `ex_…` ID.
-4. **README Step 6**: create the Agent Memory read/write key.
-5. **README Step 7, items 2–4 only**: create the Playbook and note its agent
+4. **README Step 7, items 2–4 only**: create the Playbook and note its agent
    endpoint and `pb_…` ID. **Skip** packaging, Upload Skill and Publish.
    You do those.
-6. On the Playbook page, create **two** keys:
-   - a **full-access** key (the default dialog). It is used once, to publish
-     the Skill.
-   - a **read-only** key (**README Step 8**). The plugin runs with this one.
+5. In **Iris → Access & Identity → New API key**, create **two** keys. This
+   replaces README Steps 6 and 8:
+   - `real-reaction-runtime`: the store with **read and write**, the Playbook
+     with **read**. The plugin runs with this one; it goes in both `_API_KEY`
+     lines of `editor.env`.
+   - `real-reaction-publisher`: the Playbook with **full**. It is used once,
+     to publish the Skill.
 
 Ask the user to reply with the six non-secret values and a participant name
 (`andrew`, `craig`, `david` or `laura`).
@@ -91,7 +93,7 @@ IRIS_AGENT_PLAYBOOKS_CONTENT_API_KEY=
 
 Create them with `umask 077`. Then ask the user to open each file and paste
 the keys:
-- In `editor.env`: the Agent Memory key and the **read-only** Playbook key.
+- In `editor.env`: the runtime key, in both `IRIS_AGENT_MEMORY_API_KEY` and `IRIS_AGENT_PLAYBOOKS_API_KEY`.
 - In `publisher.env`: the **full-access** Playbook key.
 
 Check that the keys are there without printing them. Each count must be `1`:
