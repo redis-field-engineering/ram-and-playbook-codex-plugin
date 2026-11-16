@@ -526,6 +526,38 @@ you confirm it. Your participant name labels your contributions but is not a
 login; access is controlled by your keys. Details are in
 [SECURITY.md](SECURITY.md).
 
+## Faster setup: CLI, SDK and agents
+
+Most of Part 2 is console clicks, and many of them have an `iris` CLI command
+or a Python SDK call. Both are already installed in this project's `.venv`.
+
+- [docs/console-to-cli.md](docs/console-to-cli.md): every console click, its
+  CLI command and SDK call, and whether it works on Redis Cloud today.
+- [docs/demo_script_cloud.md](docs/demo_script_cloud.md): this guide as
+  commands, one per block.
+- `.agents/skills/set-up-demo`: hands those commands to a coding agent. Open
+  this folder in Codex and ask it to "use the set-up-demo skill".
+
+How much faster each path is. These are **estimates**: the README's steps
+re-added for each path, not measured:
+
+| Path | Your hands-on time | Start to finish | Your attention vs README |
+| --- | --- | --- | --- |
+| This README, by hand | ~40 min | ~40 min | 1× |
+| `demo_script_cloud.md`, by hand | ~37 min | ~37 min | ~1.1× less |
+| `set-up-demo` skill (agent), **today** | ~25 min: console and ChatGPT only | ~32 min | ~1.7× less |
+| Agent with CLI and SDK, once Cloud sign-in ships | ~6 min: sign in, approve, allow hooks | ~19 min | ~7× less |
+
+Today the agent removes the Skill packaging, upload and publish, the setup
+prompts, and the troubleshooting loop, and checks each service with a command.
+It still leaves you the console: the store, the nine-field memory type (the
+slowest single step, about 8 minutes), the extractor, the Playbook and two
+keys. Those are control-plane steps. The SDK can already do every one of them,
+including the field descriptions, but on Redis Cloud it needs a control-plane
+sign-in for the CLI and SDK, which isn't released yet. Once it ships, an agent
+can run Part 2 end to end, and the ingest wait (about 5 minutes) becomes most
+of the remaining time.
+
 ## More documentation
 
 - [CODEX_INSTALLATION.md](CODEX_INSTALLATION.md): the full participant

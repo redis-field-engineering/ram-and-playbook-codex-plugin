@@ -89,9 +89,69 @@ Use `publisher.env` for commands that need the content key.
 | Delete the Playbook's content but keep the Playbook | `iris agent-playbooks clear --scope entries --yes` | When Cloud sign-in ships |
 | Delete the service | `iris agent-memory service delete <store-id>` / `iris agent-playbooks service delete <pb-id>` | When Cloud sign-in ships |
 
+## SDK alternatives
+
+The Python SDKs that the plugin already installs (`redis-agent-memory`,
+`redis-agent-playbook`, `redis-iris`, all 1.1.0) cover everything the CLI does.
+They also cover the two control-plane steps the CLI can't do: the memory type
+**with its field descriptions**, and the extractor.
+
+| README step / console click | SDK call | Status |
+| --- | --- | --- |
+| Step 3: create the store | `redis_agent_memory.controlplane.AgentMemoryService.create_store(database=..., name=..., custom_memory_types=[...])` | When Cloud sign-in ships |
+| Step 4: the memory type, nine fields **with descriptions** | `AgentMemoryService.create_memory_type(store_id=..., name=..., description=..., fields=[...])`, or `update_memory_type` later. Also works on a store created in the console. | When Cloud sign-in ships |
+| Step 5: the extractor | `AgentMemoryService.create_extractor(store_id=..., memory_type=..., name=..., prompt=..., source="DOCUMENTS", strategy="CUSTOM")` returns `extractor_id` | When Cloud sign-in ships |
+| Step 7: create the Playbook | `redis_agent_playbook.controlplane.AgentPlaybooksService.create_playbook(...)` | When Cloud sign-in ships |
+| Step 7: upload and publish the Skill | `redis_agent_playbook.Playbook.create_skill(...)` / `append_skill_version(...)`, then `publish_skill(...)`. The CLI's `skills push --publish all` wraps these with digest checks and retries, so prefer the CLI. | **Today** |
+| Step 9: load the documents | `redis_agent_memory` document ingestion, already what `setup_demo.py` calls | **Today** |
+| Checks: health, discovery, recall | `redis_iris.AgentPlaybooks.from_env().discover(...)`, `redis_iris.AgentMemory` recall, `Playbook.get_playbook_health(...)` | **Today** |
+
+The control-plane SDK takes a `server_url` and a bearer token: the same
+operator credential the CLI is waiting for on Cloud. It works today on
+self-managed Iris. On Cloud, it works once control-plane sign-in ships.
+
+Steps 4 and 5 in one script, reading the checked-in contract so nothing is
+retyped. This was checked against a mock control plane on 1.1.0: it sends
+the nine fields with their descriptions, then creates the extractor.
+
+```python
+import json
+import os
+from pathlib import Path
+
+from redis_agent_memory.controlplane import AgentMemoryService
+
+V1 = Path("context-models/management-agenda/v1")
+TYPES = {"str": "STRING", "object": "OBJECT"}
+spec = json.loads((V1 / "memory-types/organizational-state-compact.json").read_text())["customMemoryType"]
+store_id = os.environ["IRIS_AGENT_MEMORY_STORE_ID"]
+
+service = AgentMemoryService(
+    server_url=os.environ["IRIS_AGENT_MEMORY_SERVICE_URL"],
+    token=os.environ["IRIS_AGENT_MEMORY_SERVICE_TOKEN"],
+)
+service.create_memory_type(
+    store_id=store_id,
+    name=spec["name"],
+    description=spec["description"],
+    fields=[{"name": f["name"], "type": TYPES[f["type"]], "description": f["description"]} for f in spec["fields"]],
+)
+extractor = service.create_extractor(
+    store_id=store_id,
+    name="organizational-state-documents",
+    memory_type=spec["name"],
+    prompt=(V1 / "extraction-prompt-compact.txt").read_text(),
+    source="DOCUMENTS",
+    strategy="CUSTOM",
+)
+print(extractor.extractor_id)   # the ex_... value for editor.env
+```
+
 ## Gaps for the Iris team
 
-Without these, Cloud sign-in alone still leaves console steps:
+The SDK already covers all three of these (see above). Until the CLI covers
+them too, Cloud sign-in alone still leaves console steps for anyone using only
+the CLI:
 
 1. **No extractor command.** Step 5 stays a console form even with sign-in.
    The control-plane route exists (`POST /iris/v1/agent-memory/stores/{storeId}/extractors`).
