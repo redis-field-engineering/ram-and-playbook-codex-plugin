@@ -33,9 +33,11 @@ Stop if Python is older than 3.11 (README Step 1) or a check fails.
 ## 2. Console steps (user)
 
 Only the console can create services, memory types, extractors and keys today.
-The `iris` CLI covers these control-plane steps only once its Redis Cloud
-sign-in ships. Send the user this list in one message, linking the README
-sections:
+The `iris` CLI covers most of these control-plane steps once its Redis Cloud
+sign-in ships. [docs/console-to-cli.md](../../../docs/console-to-cli.md)
+tracks which. If that page marks a step **Today**, run the command instead of
+asking for the click. Send the user the rest in one message, linking the
+README sections:
 
 1. **README Step 3**: create the Agent Memory service. Note the endpoint and
    store ID.
@@ -161,6 +163,17 @@ limits it to this folder, and trusts the folder. It is safe to re-run.
 
 If it fails, match its `✗` line to README "If something goes wrong". Fix what
 you can with a command. Send console fixes back to the user.
+
+To find out which service a failure comes from, check each one yourself
+rather than sending the user to the console:
+
+```sh
+(set -a; . ~/.config/redis-shared-memory/editor.env; .venv/bin/iris agent-memory health)
+```
+
+```sh
+(set -a; . ~/.config/redis-shared-memory/editor.env; .venv/bin/iris --json agent-playbooks discover "prepare management review agenda" --pin-key prepare-management-review-agenda)
+```
 
 ## 6. Hand back (user)
 
